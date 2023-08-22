@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load add_attr %}
+
+{% block page_title %}Profile ({{ user.username }}){% endblock %}
+
+{% block custom_css %}
+<style>
+  .form-control {
+    height: auto !important;
+  }
+</style>
+{% endblock %}
+
+{% block main_content %}
+<div class="">
+  <form method="post">
+    {% csrf_token %}
+    <small class="form-text text-danger mb-3">
+      {{ form.non_field_errors }}
+      {{ form.first_name.errors }}
+      {{ form.last_name.errors }}
+    </small>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="form-floating mb-3 mb-md-0">
+          {{ form.first_name|add_attr:"form-control, placeholder: Enter you first name" }}
+          <label for="{{ form.first_name.id_for_label }}">First name</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="form-floating">
+          {{ form.last_name|add_attr:"form-control, placeholder: Enter you last name" }}
+          <label for="{{ form.last_name.id_for_label }}">Last name</label>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <div class="form-floating mb-3 mb-md-0">
+          {{ form.mobile|add_attr:"form-control, placeholder: Enter your Mobile" }}
+          <label for="{{ form.mobile.id_for_label }}">Mobile</label>
+        </div>
+      </div>
+    </div>
+    <div class="mt-4 mb-0">
+      <div class="d-grid">
+        <input type="submit" class="btn btn-primary btn-block" value="Update">
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

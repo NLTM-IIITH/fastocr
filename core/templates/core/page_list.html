@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Button trigger modal -->
+
+<div class="container mt-4">
+  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+    <i class="fa fa-plus"></i>
+    Upload new Page
+  </button>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Select Image and Language to continue</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form method="post" enctype="multipart/form-data" class="mt-4">
+            <p>
+              <input type="file" name="image" accept="image/*" required id="id_image">
+            </p>
+            <p>
+              <select name="language" required id="id_language">
+                <option value="" selected>Select Language</option>
+                <option value="assamese">Assamese</option>
+                <option value="bengali">Bengali</option>
+                <option value="english">English</option>
+                <option value="gujarati">Gujarati</option>
+                <option value="hindi">Hindi</option>
+                <option value="kannada">Kannada</option>
+                <option value="malayalam">Malayalam</option>
+                <option value="manipuri">Manipuri</option>
+                <option value="marathi">Marathi</option>
+                <option value="oriya">Oriya</option>
+                <option value="punjabi">Punjabi</option>
+                <option value="tamil">Tamil</option>
+                <option value="telugu">Telugu</option>
+                <option value="urdu">Urdu</option>
+              </select>
+            </p>
+            <p>
+              <input type="submit" value="Submit" class="btn btn-outline-success">
+            </p>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table class="table mt-2">
+    <thead>
+      <tr>
+        <th colspan="5" class="text-center">User uploaded Pages (Select a page and click OCR to continue)</th>
+      </tr>
+      <tr>
+        <th>ID</th>
+        <th>Filename</th>
+        <th>Upload Date</th>
+        <th>Language</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for page in page_list %}
+      <tr>
+        <td>{{ page.id }}</td>
+        <td>{{ page.filename }}</td>
+        <td>{{ page.created }}</td>
+        <td>{{ page.language|title }}</td>
+        <td>
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#imageModal{{ page.id }}">
+            <i class="fa fa-image"></i> Image
+          </button>
+          <div class="modal fade" id="imageModal{{ page.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ page.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="imageModalLabel{{ page.id }}">Image</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <img src="{{ page.image.url }}" style="max-width: 1000px; max-height: 600px;" loading="lazy">
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <a href="{% url 'core:ocr' pk=page.pk %}" class="btn btn-primary">OCR</a>
+          <a href="{% url 'core:delete' pk=page.pk %}" class="btn btn-danger" data-bs-toggle="tooltip" title="Delete this page"><i class="fa fa-trash"></i></a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center">No Pages uploaded yet</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+<!DOCTYPE html>
+{% load static %}
+
+{% block custom_css %}
+<style>
+body,h1,h2,h3,h4,h5 {font-family: "Poppins", sans-serif}
+.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
+.fa-anchor,.fa-coffee {font-size:200px}
+.bgimg {
+  background-position: center;
+  background-size: cover;
+  background-image: url("/w3images/coffeehouse.jpg");
+  min-height: 75%;
+}
+
+.menu {
+  display: none;
+}
+
+body {font-size: 16px;}
+img {margin-bottom: -8px;}
+.mySlides {display: none;}
+
+
+
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+</style> 
+{% endblock %}
+
+<!-- Header with Slideshow -->
+{% block base_content %}
+<header class="w3-display-container w3-center">
+  <button class="w3-button w3-block w3-green w3-hide-large w3-hide-medium" onclick="document.getElementById('download').style.display='block'">Click Here to get updates<i class="fa fa-android"></i> <i class="fa fa-apple"></i> <i class="fa fa-windows"></i></button>
+  <div class="mySlides w3-animate-opacity">
+    <img class="w3-image" src="{% static 'core/images/first.jpeg'%}" alt="Image 1" style="min-width:500px" width="1500" height="1000">
+    <div class="w3-display-left w3-padding w3-hide-small" style="width:35%">
+      <div class="w3-black w3-opacity w3-hover-opacity-off w3-padding-large w3-round-large">
+        <h1 class="w3-xlarge">Login/Register to continue using the Application</h1>
+        <hr class="w3-opacity">
+        <p><a href="{% url 'user:login' %}" class="w3-button w3-block w3-green w3-round">Login <i class="fa fa-sign-in"></i></a></p>
+      </div>
+    </div>
+  </div>
+  <div class="mySlides w3-animate-opacity">
+    <img class="w3-image" src="{% static 'core/images/third.jpeg' %}" alt="Image 2" style="min-width:500px" width="1500" height="1000">
+    <div class="w3-display-left w3-padding w3-hide-small" style="width:35%">
+      <div class="w3-black w3-opacity w3-hover-opacity-off w3-padding-large w3-round-large">
+        <h1 class="w3-xlarge">Login/Register to continue using the Application</h1>
+        <hr class="w3-opacity">
+        <p><a href="{% url 'user:login' %}" class="w3-button w3-block w3-green w3-round">Login <i class="fa fa-sign-in"></i></a></p>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="mySlides w3-animate-opacity">
+    <img class="w3-image" src="{% static 'core/images/third.jpeg' %}" alt="Image 3" style="min-width:500px" width="1500" height="1000">
+    <div class="w3-display-left w3-padding w3-hide-small" style="width:35%">
+      <div class="w3-black w3-opacity w3-hover-opacity-off w3-padding-large w3-round-large">
+        <h1 class="w3-xlarge">Submit Here To Get Notification on Your Mail-Id</h1>
+        <hr class="w3-opacity">
+        <p>Submit Your Mail Id And Get Updates</p>
+        <p><button class="w3-button w3-block w3-green w3-round" onclick="document.getElementById('download').style.display='block'">Click Here to Get Live Updates<i class="fa fa-chain"></i></button></p>
+      </div>
+    </div>
+  </div> -->
+  <a class="w3-button w3-black w3-display-right w3-margin-right w3-round w3-hide-small w3-hover-light-grey" onclick="plusDivs(1)">Take Tour <i class="fa fa-angle-right"></i></a>
+  <a class="w3-button w3-block w3-black w3-hide-large w3-hide-medium" onclick="plusDivs(1)">Take Tour <i class="fa fa-angle-right"></i></a>
+</header>
+
+<!-- The App Section -->
+<div class="w3-padding-64 w3-white">
+  <div class="w3-row-padding row">
+    <div class="col-5">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/aH7ISqkQPdE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="col-7">
+      <h1 class="w3-jumbo"><b>About The Application</b></h1>
+      <h1 class="w3-xxxlarge w3-text-green"><b>How is this helpful for Community?</b></h1>
+      <p><span class="w3-xlarge">FastOCR</span> We have developed an application that aims to provide <b>Fast</b> and <b>Reliable</b> Image to text conversion for all major Indian languages. The objective of this application is provide OCR for <u>any</u> page irrespective of the issues such as <b>Multi-lingual</b>, <b>Multi-Modality</b>, <b>Multi-column layout</b> etc.</p>
+      <!-- <button class="w3-button w3-light-grey w3-padding-large w3-section w3-hide-small" onclick="document.getElementById('download').style.display='block'">
+        <i class="fa fa-github"></i> Download Application
+      </button> -->
+      <p>Available on <i class="fa fa-android w3-xlarge w3-text-green"></i> <i class="fa fa-apple w3-xlarge"></i> <i class="fa fa-windows w3-xlarge w3-text-blue"></i></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Clarity Section -->
+<!-- <div class="w3-padding-64 w3-dark-grey">
+  <div class="w3-row-padding row">
+    <div class="col text-center">
+      <h1 class="w3-jumbo"><b>Upload Image to get started</b></h1>
+      <form method="post" enctype="multipart/form-data" class="mt-4">
+        <p>
+          <input type="file" name="image" accept="image/*" required id="id_image">
+        </p>
+        <p>
+          <select name="language" required id="id_language">
+            <option value="" selected>Select Language</option>
+            <option value="assamese">Assamese</option>
+            <option value="bengali">Bengali</option>
+            <option value="english">English</option>
+            <option value="gujarati">Gujarati</option>
+            <option value="hindi">Hindi</option>
+            <option value="kannada">Kannada</option>
+            <option value="malayalam">Malayalam</option>
+            <option value="manipuri">Manipuri</option>
+            <option value="marathi">Marathi</option>
+            <option value="oriya">Oriya</option>
+            <option value="punjabi">Punjabi</option>
+            <option value="tamil">Tamil</option>
+            <option value="telugu">Telugu</option>
+            <option value="urdu">Urdu</option>
+          </select>
+        </p>
+        <p>
+          <input type="submit" value="Submit" class="btn btn-outline-success">
+        </p>
+      </form>
+    </div>
+  </div>
+</div> -->
+
+
+<!-- Footer -->
+<footer class="w3-container w3-padding-32 w3-light-gray w3-center w3-xlarge">
+  <div class="container-fluid" style="margin-bottom:0; text-align: center;">
+            <span class="text-muted">
+              &copy; NLTM, IIIT Hyderabad.
+            </span>
+          </div>
+</footer>
+
+<script>
+// Slideshow
+var slideIndex = 1;
+showDivs(slideIndex);
+
+function plusDivs(n) {
+  showDivs(slideIndex += n);
+}
+
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  if (n > x.length) {slideIndex = 1}
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  x[slideIndex-1].style.display = "block";  
+}
+</script>
+    </div>
+    </div>
+    {% block scripts %}
+    <link rel="stylesheet" href="{% static 'ttsdaisy_v4/css/index.css'%}">
+    {% endblock %}
+{% endblock %}

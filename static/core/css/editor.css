@@ -1,0 +1,139 @@
+#fade {
+    display: none;
+    position:absolute;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 100%;
+    background-color: #ababab;
+    z-index: 1001;
+    -moz-opacity: 0.8;
+    opacity: .70;
+    filter: alpha(opacity=80);
+}
+
+#modal {
+    display: none;
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    width: 64px;
+    height: 64px;
+    padding:30px 15px 0px;
+    border: 3px solid #ababab;
+    box-shadow:1px 1px 10px #ababab;
+    border-radius:20px;
+    background-color: white;
+    z-index: 1002;
+    text-align:center;
+    overflow: auto;
+}
+
+#loader {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Add animation to "page content" */
+.animate-bottom {
+  position: relative;
+  -webkit-animation-name: animatebottom;
+  -webkit-animation-duration: 1s;
+  animation-name: animatebottom;
+  animation-duration: 1s
+}
+
+@-webkit-keyframes animatebottom {
+  from { bottom:-100px; opacity:0 }
+  to { bottom:0px; opacity:1 }
+}
+
+@keyframes animatebottom {
+  from{ bottom:-100px; opacity:0 }
+  to{ bottom:0; opacity:1 }
+}
+
+#editor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+#editors {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+.row{
+  height: 100%;
+}
+
+.smrow{
+  height: 10%;
+}
+
+.midrow{
+  height: 30%;
+}
+.container-fluid{
+  height: 100%;
+}
+
+#imageUpload img {
+  max-width: 100%;
+  max-height:  100%;
+  width:100%;
+  height: 100%;
+}
+
+#imageUpload {
+  max-width: 100%;
+  max-height:  100%;
+}
+
+.myDropDown
+{
+   height: 1btn btn-primary dropdown-toggle50px;
+   overflow: auto;
+}
+
+.ace_purple_text {
+  color: rgb(204, 0, 255);
+}
+
+.scrollable-menu {
+  height: auto;
+  max-height: 200px;
+  overflow-x: hidden;
+}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main_content %}
+<div class="container my-2">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Assigned Pages</th>
+          <th>Correct Pages</th>
+          <th>Skipped Pages</th>
+          <th>Total Pages</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ assigned|default:"0" }}</td>
+          <td>{{ corrected|default:"0" }}</td>
+          <td>{{ skipped|default:"0" }}</td>
+          <td>{{ total|default:"0" }}</td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+{% endblock main_content %}

@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="text-center mt-4">
+<h2 class="m-3 mb-5">Upload an image to get started</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="submit" class="btn btn-primary">
+</form>
+
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+django==4.2
+ipython
+django-extensions
+Pillow
+requests

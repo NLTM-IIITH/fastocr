@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block custom_css %}
+<link rel="stylesheet" href="{% static 'core/css/imagetag.css' %}">
+{% endblock %}
+
+{% block custom_js %}
+<!-- <script src="{% static 'core/js/imagetag.js' %}" type="text/javascript" ></script> -->
+{% endblock %}
+
+{% block content %}
+<div class="split left">
+  <div id="master" ></div>
+  <img id="hardimage" src="{{ page.image.url }}" style="display:none" height="100" width="100"></img>
+</div>
+
+<div class="modal fade" id="instructionsModal" tabindex="-1" aria-labelledby="instructionsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="instructionsModalLabel">Instructions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ul>
+          <li>Change and confirm the page level settings from the <small class="text-white bg-primary p-1 rounded text-sm">Page Settings</small> button
+            <ul>
+              <li>Select the Segmentation model.</li>
+              <li>Select the OCR Model</li>
+              <li>Select the modality of the document</li>
+              <li>Select the language of the document</li>
+            </ul>
+          </li>
+          <li>Select any text region from the image using mouse-drag</li>
+          <li>Use the <mark>Delete</mark> key to delete the selected regions</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-start" tabindex="-1" id="pageSettings" aria-labelledby="pageSettingsLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="pageSettingsLabel">Page Settings</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="row">
+      <div class="col">
+        <select class="form-select m-2" onchange="" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
+          <option selected>Server (default: IIITH)</option>
+          <option value="IIITH">IIITH</option>
+          <option value="bhashini">Bhashini</option>
+        </select>
+        <select class="form-select m-2" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
+          <option selected>Layout Version (default: V1.1)</option>
+          <option value="doctr">V1.0</option>
+          <option value="v2_doctr">V1.1</option>
+          <option value="craft">V2</option>
+        </select>
+        <select class="form-select m-2" onchange="changePageVersion(this.options[this.selectedIndex].value);">
+          <option selected>OCR Version (default: V4.1)</option>
+          <option value="v2">V2.0</option>
+          <option value="v3">V3.0</option>
+          <option value="v4">V4.0</option>
+          <option value="v4_robust">V4.1</option>
+          <option value="v4_bilingual">V4.2</option>
+          <option value="v4_robustbilingual">V4.3</option>
+          <option value="v4.14u">V4.0.14+u</option>
+          <option value="v4.14u_robust">V4.1.14+u</option>
+          <option value="tesseract">Tesseract-V4</option>
+        </select>
+        <select class="form-select m-2" onchange="changePageModality(this.options[this.selectedIndex].value);" title="Select the Modality of the document.">
+          <option selected>Modality (default: Printed)</option>
+          <option value="printed">Printed</option>
+          <option value="handwritten">Handwritten</option>
+          <option value="scenetext">SceneText</option>
+        </select>
+        <select class="form-select m-2" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
+          <option selected>Language (default: {{ page.language|title }})</option>
+          <option value="assamese">Assamese</option>
+          <option value="bengali">Bengali</option>
+          <option value="english">English</option>
+          <option value="gujarati">Gujarati</option>
+          <option value="hindi">Hindi</option>
+          <option value="kannada">Kannada</option>
+          <option value="malayalam">Malayalam</option>
+          <option value="manipuri">Manipuri</option>
+          <option value="marathi">Marathi</option>
+          <option value="oriya">Oriya</option>
+          <option value="punjabi">Punjabi</option>
+          <option value="tamil">Tamil</option>
+          <option value="telugu">Telugu</option>
+          <option value="urdu">Urdu</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button class="btn btn-success" onclick="perform_ocr();">Save</button>
+      </div>
+    </div>
+    <!-- <div class="dropdown mt-3">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div> -->
+  </div>
+</div>
+
+<div class="split right">
+  <p></p>
+  <p></p>
+  <div class="ml-2">
+  <a class="btn btn-primary" data-bs-toggle="offcanvas" href="#pageSettings" role="button" aria-controls="pageSettings" title="Click to open the window for changing the page level settings.">
+    Page Settings
+  </a>
+  <a class="btn btn-primary" data-bs-toggle="modal" href="#instructionsModal" role="button">
+    Instructions
+  </a>
+  <a href="{% url 'core:next' pk=page.pk %}" class="btn btn-primary">Next Page</a>
+
+  </div>
+  <div class="row">
+    <div class="col-sm-12" style="height: 92%">
+      <div id="ocr">
+        <p class="h4 my-3">Select a region in the image to continue, or click on Instructions for further details.</p>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <script src="{% static 'core/js/imagetag.js' %}" type="text/javascript" ></script>
+
+  <script type="text/javascript">
+    var data = {
+      container_id: "master",
+      shapes: [
+        {
+          name: 'rectangle',
+          code: 'rect',
+          region_shape: 'RECT'
+        },
+      ]
+    };
+
+    // get the saved JSON data to this variable(json_data) 
+    //var json_data = '{"region":[{"region_name":"Paragraph","region_color":"#66ff99","region_description":"text content", "region_attributes":[{"att_name":"language","att_type":false}]},{"region_name":"Heading","region_color":"#e9836e","region_description":"graphic content","region_attributes":[{"att_name":"language","att_type":false}]},{"region_name":"Table","region_color":"#8c8280","region_description":"Table content"},{"region_name":"Image","region_color":"#8c8280","region_description":"Image content"}]}';
+    var json_data = '{"region":[{"region_name":"Paragraph","region_color":"#66ff99","region_description":"text content", "region_attributes":[{"att_name":"language","att_type":false}]},{"region_name":"Heading","region_color":"#e9836e","region_description":"graphic content","region_attributes":[{"att_name":"language","att_type":false}]},{"region_name":"Table","region_color":"#8c8280","region_description":"Table content"},{"region_name":"Image","region_color":"#5d75ed","region_description":"Image content"}, {"region_name":"Inverted","region_color":"#f1f732","region_description":"Image content"}]}';
+      
+    
+    try {
+      var read_json = JSON.parse(json_data); 
+    }
+    catch(err) {
+      read_json = {region:[]}
+    }
+    read_json = {region: []}
+
+
+    data["region"] = read_json["region"];
+    console.log(data["region"]);
+
+    setTimeout(() => {
+      _init_seg_tool(data);
+    }, 1000);
+
+    // _init_seg_tool(data);
+
+  </script>
+  <div>
+
+    <!-- <input type="hidden" name="bookid" value="{{ page.book.id }}" id="hiddenBookId">
+    <input type="hidden" name="bookname" value="{{ page.book.title }}" id="hiddenBookName">
+    <input type="hidden" name="pagenumber" value="{{ page.page_number }}" id="hiddenPageNumber"> -->
+    <input type="hidden" name="is_final_page" value="0" id="isFinalPage">
+    <input type="hidden" name="page_id" value="{{ page.id }}" id="hiddenPage_id">
+    <!-- <input type="hidden" name="page_position" value="{{ page_position }}" id="hiddenPage_position">
+    <input type="hidden" name="all_processed" value="{{ all_processed }}" id="hiddenall_processed"> -->
+    <input type="hidden" value="{{ page.language }}" id="hiddenPageLanguage">
+    <input type="hidden" value="v4_robust" id="hiddenPageVersion">
+    <input type="hidden" value="v2_doctr" id="hiddenPageLayoutVersion">
+    <input type="hidden" value="printed" id="hiddenPageModality">
+  </div>
+
+  {% endblock content %}
