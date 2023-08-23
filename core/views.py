@@ -1,3 +1,4 @@
+import base64
 import json
 import shutil
 from os.path import basename, join
@@ -72,6 +73,47 @@ class OCRView(DetailView):
     template_name = 'core/ocr.html'
 
 
+def call_bhashini_api(url, filepath, language):
+    LANGUAGES = {
+        'hindi': 'hi',
+        'english': 'en',
+        'marathi': 'mr',
+        'tamil': 'ta',
+        'telugu': 'te',
+        'kannada': 'kn',
+        'gujarati': 'gu',
+        'punjabi': 'pa',
+        'bengali': 'bn',
+        'malayalam': 'ml',
+        'assamese': 'asa',
+        'manipuri': 'mni',
+        'oriya': 'ori',
+        'urdu': 'ur',
+    }
+    request = {
+        "image": [{
+            "imageContent": base64.b64encode(open(filepath, 'rb').read()).decode()
+        }],
+        "config": {"languages": [{
+            "sourceLanguage": LANGUAGES[language]
+        }]}
+    }
+    r = requests.post(
+        url,
+        headers={'Content-Type': 'application/json'},
+        data=json.dumps(request)
+    )
+    print(r.text)
+    if r.ok:
+        ret = r.json()['output'][0]['source']
+    else:
+        ret = ''
+    return JsonResponse({
+        'ocr': ret,
+        'ok': r.ok
+    })
+
+
 @csrf_exempt
 def temp_ocr(request):
     print(request.POST)
@@ -80,8 +122,9 @@ def temp_ocr(request):
     version = request.POST.get('version', 'v4')
     modality = request.POST.get('modality', 'printed')
     language = request.POST.get('language', 'english')
+    custom_link = request.POST.get('custom_link', '')
     layout_version = request.POST.get('layout_version', 'v2_doctr')
-    print(language, modality, version, layout_version)
+    print(language, modality, version, layout_version, custom_link)
     if modality == 'handwritten' and version == 'v4':
         version = 'v4_hw'
     image = request.POST.get('image', '')
@@ -109,6 +152,11 @@ def temp_ocr(request):
         (region['x'], region['y'])
     )
     img.convert('RGB').save(final_path)
+
+    # TODO: remove this ilocr hardcode in the future
+    if custom_link and 'ilocr' not in custom_link:
+        return call_bhashini_api(custom_link, final_path, language)
+
     r = requests.post(
         'http://10.4.16.103:8881/pageocr/api',
         headers={},
