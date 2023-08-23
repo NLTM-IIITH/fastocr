@@ -96,9 +96,11 @@
         <ul class="nav justify-content-end">
           {% if user.is_authenticated %}
           <li><a href="{% url 'core:page-list' %}" class="btn"><font size="4" color= #abedd8>Home</font></a></li>
+          <li><a href="https://github.com/NLTM-IIITH/fastocr" target="_blank" class="btn"><font size="4" color= #abedd8><i class="fa fa-github"></i> GitHub</font></a></li>
           <li><a href="{% url 'user:logout' %}" class="btn"><font size="4" color= #abedd8>Logout</font></a></li>
           {% else %}
           <li><a href="{% url 'core:index' %}" class="btn"><font size="4" color= #abedd8>Home</font></a></li>
+          <li><a href="https://github.com/NLTM-IIITH/fastocr" target="_blank" class="btn"><font size="4" color= #abedd8><i class="fa fa-github"></i> GitHub</font></a></li>
           <li><a href="{% url 'user:login' %}" class="btn"><font size="4" color= #abedd8>Login</font></a></li>
           {% endif %}
         </ul>

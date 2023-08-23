@@ -4,8 +4,11 @@
 {% block content %}
 <!-- Button trigger modal -->
 
-<div class="container mt-4">
-  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<div class="container-fluid mt-4">
+  <div class="h3">
+    <p>Welcome, {{ request.user.first_name|title }} {{ request.user.last_name|title }}</p>
+  </div>
+  <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
     <i class="fa fa-plus"></i>
     Upload new Page
   </button>
@@ -93,7 +96,7 @@
               </div>
             </div>
           </div>
-          <a href="{% url 'core:ocr' pk=page.pk %}" class="btn btn-primary">OCR</a>
+          <a href="{% url 'core:ocr' pk=page.pk %}" target="_blank" class="btn btn-primary"><i class="fa fa-external-link"></i> OCR</a>
           <a href="{% url 'core:delete' pk=page.pk %}" class="btn btn-danger" data-bs-toggle="tooltip" title="Delete this page"><i class="fa fa-trash"></i></a>
         </td>
       </tr>

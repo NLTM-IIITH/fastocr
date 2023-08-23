@@ -1184,6 +1184,8 @@ function show_image(image_index){
   var canvas_panel_width = de.clientWidth;
   var canvas_panel_height = de.clientHeight;
   var canvas_panel_width = document.getElementById("display_area").clientWidth - 20;
+  console.log("_current_image_size", _current_image_width, _current_image_height);
+  console.log("canvas_panel_size", canvas_panel_width, canvas_panel_height);
   _canvas_width = _current_image_width;
   _canvas_height = _current_image_height;
   if ( _canvas_width > canvas_panel_width ) {
