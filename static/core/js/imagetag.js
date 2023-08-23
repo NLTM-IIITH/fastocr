@@ -653,7 +653,7 @@ function show_body(container_id){
       </ul>\
 \
     </div> <!-- end of #navbar -->\
-\<button class = "btn" id="toolbar_del_region" onclick="del_sel_regions()" title="Delete Region"><span STYLE="color: red; font-size: 8pt" class="oi oi-delete"><b>Delete</b></span></button>\
+\<button class = "btn" id="toolbar_del_region" onclick="del_sel_regions()" title="Delete Region"><span STYLE="color: red; font-size: 11pt" class="oi oi-delete"><b>Delete</b></span></button>\
     <!-- Shortcut toolbar -->\
     <div class="">\
       <ul>\

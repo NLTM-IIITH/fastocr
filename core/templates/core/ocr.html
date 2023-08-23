@@ -75,7 +75,7 @@
         <div class="m-2">
           <label for="idPageLanguage">Language</label>
           <select class="form-select m-2" id="idPageLanguage" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
-            <option selected>Language (default: {{ page.language|title }})</option>
+            <option selected>Default: {{ page.language|title }}</option>
             <option value="assamese">Assamese</option>
             <option value="bengali">Bengali</option>
             <option value="english">English</option>
