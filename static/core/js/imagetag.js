@@ -183,6 +183,7 @@ function ImageRegion() {
   this.ocr_version = document.getElementById("hiddenPageVersion").value;
   this.layout_version = document.getElementById("hiddenPageLayoutVersion").value;
   this.language = document.getElementById("hiddenPageLanguage").value;
+  this.custom_link = document.getElementById("hiddenPageCustomLink").value;
 }
 
 function populate_region_list(legendList, label_id) {
@@ -4613,6 +4614,7 @@ function perform_ocr() {
         "layout_version": region.layout_version,
         "modality": region.modality,
         "language": region.language,
+        "custom_link": region.custom_link,
         "region": JSON.stringify(region.shape_attributes)
       },
       success: function (response){
@@ -4768,10 +4770,11 @@ function _draw_single_region(region, index) {
       elem("div", {"class": "row"}, [
         elem("div", {"class": "col-2"}, "Region " + idx.toString()),
         elem("div", { "class": "col-8 text-center"}, [
-          elem("span", {"class": "badge rounded-pill bg-info"}, capitalizeFirstLetter(region.modality)),
           elem("span", {"class": "badge rounded-pill bg-info"}, capitalizeFirstLetter(region.language)),
-          elem("span", {"class": "badge rounded-pill bg-info"}, capitalizeFirstLetter(region.layout_version)),
-          elem("span", {"class": "badge rounded-pill bg-info"}, capitalizeFirstLetter(region.ocr_version)),
+          elem("span", {"class": "badge rounded-pill bg-info", "style": region.custom_link ? "display:none;" : ""}, capitalizeFirstLetter(region.modality)),
+          elem("span", {"class": "badge rounded-pill bg-info", "style": region.custom_link ? "display:none;" : ""}, capitalizeFirstLetter(region.layout_version)),
+          elem("span", {"class": "badge rounded-pill bg-info", "style": region.custom_link ? "display:none;" : ""}, capitalizeFirstLetter(region.ocr_version)),
+          elem("span", {"class": "badge rounded-pill bg-info", "style": !region.custom_link ? "display:none;" : "", "title": region.custom_link, "data-bs-toggle": "tooltip"}, "Custom Link"),
           elem("span", {"class": "badge rounded-pill bg-info"}, "# Words: " + region.ocr.trim().split(/\s+/).length),
         ]),
         elem("div", { "class": "col-2", "style": "text-align: right;"}, [
@@ -4798,17 +4801,6 @@ function _draw_single_region(region, index) {
         elem("div", {"class": "col-3 pl-0"}, [
           elem("select", {
             "class": "form-select form-select-sm",
-            "onchange": "changeRegionModality(" + index.toString() + ", this.options[this.selectedIndex].value);",
-          }, [
-            elem("option", {"selected": "true"}, "Modality (" + region.modality + ")"),
-            elem("option", {"value": "printed"}, "Printed"),
-            elem("option", {"value": "handwritten"}, "Handwritten"),
-            elem("option", {"value": "scenetext"}, "SceneText"),
-          ])
-        ]),
-        elem("div", {"class": "col-3 pl-0"}, [
-          elem("select", {
-            "class": "form-select form-select-sm",
             "onchange": "changeRegionLanguage(" + index.toString() + ", this.options[this.selectedIndex].value);",
           }, [
             elem("option", {"selected": "true"}, "Language (" + region.language + ")"),
@@ -4831,6 +4823,19 @@ function _draw_single_region(region, index) {
         elem("div", {"class": "col-3 pl-0"}, [
           elem("select", {
             "class": "form-select form-select-sm",
+            "style": region.custom_link ? "display:none;" : "",
+            "onchange": "changeRegionModality(" + index.toString() + ", this.options[this.selectedIndex].value);",
+          }, [
+            elem("option", {"selected": "true"}, "Modality (" + region.modality + ")"),
+            elem("option", {"value": "printed"}, "Printed"),
+            elem("option", {"value": "handwritten"}, "Handwritten"),
+            elem("option", {"value": "scenetext"}, "SceneText"),
+          ])
+        ]),
+        elem("div", {"class": "col-3 pl-0"}, [
+          elem("select", {
+            "class": "form-select form-select-sm",
+            "style": region.custom_link ? "display:none;" : "",
             "onchange": "changeRegionLayoutVersion(" + index.toString() + ", this.options[this.selectedIndex].value);",
           }, [
             elem("option", {"selected": "true"}, "Layout (" + region.layout_version + ")"),
@@ -4842,6 +4847,7 @@ function _draw_single_region(region, index) {
         elem("div", {"class": "col-3 pl-0"}, [
           elem("select", {
             "class": "form-select form-select-sm",
+            "style": region.custom_link ? "display:none;" : "",
             "onchange": "changeRegionOCRVersion(" + index.toString() + ", this.options[this.selectedIndex].value);",
           }, [
             elem("option", {"selected": "true"}, "OCR (" + region.ocr_version + ")"),
@@ -4875,3 +4881,36 @@ document.addEventListener("keydown", (event) => {
     del_sel_regions();
   }
 });
+
+function saveCustomLink() {
+  console.log("called function to use custom link for OCR API");
+  var link = document.getElementById("idCustomLink").value;
+  console.log("Requested custom link", link);
+
+  // adding the link to the hidden variables.
+  var ele = document.getElementById("hiddenPageCustomLink");
+  ele.value = link;
+  // updating link to all the available regions
+  _img_metadata[_image_id].regions.forEach((region, idx) => {
+    region.ocr_done = false;
+    region.is_ocr_loading = false;
+    region.custom_link = link;
+  });
+
+  // disbale the modality and versions selection as they are not compatible.
+  var modality = document.getElementById("idPageModality");
+  var version = document.getElementById("idPageVersion");
+  var layoutVersion = document.getElementById("idPageLayoutVersion");
+  modality.disabled = link!="";
+  version.disabled = link!="";
+  layoutVersion.disabled = link!="";
+
+  // closing the modal
+  document.getElementById("idCustomOCRLinkModalClose").click();
+}
+
+function savePageSettings() {
+  console.log("Closing the offcanvas and performing the OCR");
+  document.getElementById("idPageSettingsClose").click();
+  perform_ocr();
+}
