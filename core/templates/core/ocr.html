@@ -72,50 +72,57 @@
             </div>
           </div>
         </div>
-        <select class="form-select m-2" id="idPageLanguage" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
-          <option selected>Language (default: {{ page.language|title }})</option>
-          <option value="assamese">Assamese</option>
-          <option value="bengali">Bengali</option>
-          <option value="english">English</option>
-          <option value="gujarati">Gujarati</option>
-          <option value="hindi">Hindi</option>
-          <option value="kannada">Kannada</option>
-          <option value="malayalam">Malayalam</option>
-          <option value="manipuri">Manipuri</option>
-          <option value="marathi">Marathi</option>
-          <option value="oriya">Oriya</option>
-          <option value="punjabi">Punjabi</option>
-          <option value="tamil">Tamil</option>
-          <option value="telugu">Telugu</option>
-          <option value="urdu">Urdu</option>
-        </select>
-        <p></p>
-        <p>OR</p>
-        <p>Select one of the Versions available</p>
-        <select class="form-select m-2" id="idPageModality" onchange="changePageModality(this.options[this.selectedIndex].value);" title="Select the Modality of the document.">
-          <option selected>Modality (default: Printed)</option>
-          <option value="printed">Printed</option>
-          <option value="handwritten">Handwritten</option>
-          <option value="scenetext">SceneText</option>
-        </select>
-        <select class="form-select m-2" id="idPageLayoutVersion" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
-          <option selected>Layout Version (default: V1.1)</option>
-          <option value="doctr">V1.0</option>
-          <option value="v2_doctr">V1.1</option>
-          <option value="craft">V2</option>
-        </select>
-        <select class="form-select m-2" id="idPageVersion" onchange="changePageVersion(this.options[this.selectedIndex].value);">
-          <option selected>OCR Version (default: V4.1)</option>
-          <option value="v2">V2.0</option>
-          <option value="v3">V3.0</option>
-          <option value="v4">V4.0</option>
-          <option value="v4_robust">V4.1</option>
-          <option value="v4_bilingual">V4.2</option>
-          <option value="v4_robustbilingual">V4.3</option>
-          <option value="v4.14u">V4.0.14+u</option>
-          <option value="v4.14u_robust">V4.1.14+u</option>
-          <option value="tesseract">Tesseract-V4</option>
-        </select>
+        <div class="m-2">
+          <label for="idPageLanguage">Language</label>
+          <select class="form-select m-2" id="idPageLanguage" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
+            <option selected>Language (default: {{ page.language|title }})</option>
+            <option value="assamese">Assamese</option>
+            <option value="bengali">Bengali</option>
+            <option value="english">English</option>
+            <option value="gujarati">Gujarati</option>
+            <option value="hindi">Hindi</option>
+            <option value="kannada">Kannada</option>
+            <option value="malayalam">Malayalam</option>
+            <option value="manipuri">Manipuri</option>
+            <option value="marathi">Marathi</option>
+            <option value="oriya">Oriya</option>
+            <option value="punjabi">Punjabi</option>
+            <option value="tamil">Tamil</option>
+            <option value="telugu">Telugu</option>
+            <option value="urdu">Urdu</option>
+          </select>
+        </div>
+        <hr title="OR Select from one of the available version" data-bs-target="tooltip">
+        <div class="m-2 mb-3">
+          <label for="idPageModality">Modality</label>
+          <select class="form-select" id="idPageModality" onchange="changePageModality(this.options[this.selectedIndex].value);" title="Select the Modality of the document.">
+            <option selected value="printed">Printed</option>
+            <option value="handwritten">Handwritten</option>
+            <option value="scenetext">SceneText</option>
+          </select>
+        </div>
+        <div class="m-2 mb-3">
+        <label for="idPageLayoutVersion">Layout Version</label>
+          <select class="form-select" id="idPageLayoutVersion" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
+            <option value="doctr">V1.0</option>
+            <option selected value="v2_doctr">V1.1</option>
+            <option value="craft">V2</option>
+          </select>
+        </div>
+        <div class="m-2 mb-3">
+          <label for="idPageVersion">OCR Version</label>
+          <select class="form-select" id="idPageVersion" onchange="changePageVersion(this.options[this.selectedIndex].value);">
+            <option value="v2">V2.0</option>
+            <option value="v3">V3.0</option>
+            <option value="v4">V4.0</option>
+            <option selected value="v4_robust">V4.1</option>
+            <option value="v4_bilingual">V4.2</option>
+            <option value="v4_robustbilingual">V4.3</option>
+            <option value="v4.14u">V4.0.14+u</option>
+            <option value="v4.14u_robust">V4.1.14+u</option>
+            <option value="tesseract">Tesseract-V4</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="row mt-2">
