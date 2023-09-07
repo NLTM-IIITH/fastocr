@@ -184,6 +184,7 @@ function ImageRegion() {
   this.layout_version = document.getElementById("hiddenPageLayoutVersion").value;
   this.language = document.getElementById("hiddenPageLanguage").value;
   this.custom_link = document.getElementById("hiddenPageCustomLink").value;
+  this.server = "bhashini";
 }
 
 function populate_region_list(legendList, label_id) {
@@ -1127,7 +1128,16 @@ function show_message(msg, t) {
 }
 
 function show_image(image_index){
+  console.log("show_image is called");
   var user_selected_images = document.getElementById('hardimage');
+  console.log(user_selected_images.complete);
+  // if (!user_selected_images.complete) {
+  //   setTimeout(function() {
+  //     show_image(0);
+  //   }, 1000);
+  //   console.log("Image is not loaded, retrying after 1 second");
+  //   return;
+  // }
   console.log(" user_selected_images have>>>" + user_selected_images);
   var original_image_count = _img_count;
   var discarded_file_count = 0;
@@ -4615,6 +4625,7 @@ function perform_ocr() {
         "modality": region.modality,
         "language": region.language,
         "custom_link": region.custom_link,
+        "server": region.server,
         "region": JSON.stringify(region.shape_attributes)
       },
       success: function (response){
@@ -4758,6 +4769,61 @@ function changePageLayoutVersion(option) {
   console.log(_img_metadata[_image_id]);
 }
 
+function changePageServer(option) {
+  console.log(option);
+  _img_metadata[_image_id].regions.forEach((region, idx) => {
+    region.server = option;
+  });
+  if (option == "bhashini") {
+    document.getElementById("idPageVersion").value = "v4_robust";
+    changePageVersion("v4_robust");
+    document.getElementById("idPageVersion").options[0].style = "";
+    document.getElementById("idPageVersion").options[1].style = "";
+    document.getElementById("idPageVersion").options[2].style = "";
+    document.getElementById("idPageVersion").options[3].style = "";
+    document.getElementById("idPageVersion").options[4].style = "";
+    document.getElementById("idPageVersion").options[5].style = "display:none;";
+    document.getElementById("idPageVersion").options[6].style = "";
+    document.getElementById("idPageVersion").options[7].style = "display:none;";
+    document.getElementById("idPageVersion").options[8].style = "";
+    document.getElementById("idPageVersion").options[9].style = "display:none;";
+  }
+  else if (option == "ilocr") {
+    document.getElementById("idPageVersion").value = "v4_robust";
+    changePageVersion("v4_robust");
+    document.getElementById("idPageVersion").options[0].style = "";
+    document.getElementById("idPageVersion").options[1].style = "";
+    document.getElementById("idPageVersion").options[2].style = "";
+    document.getElementById("idPageVersion").options[3].style = "";
+    document.getElementById("idPageVersion").options[4].style = "";
+    document.getElementById("idPageVersion").options[5].style = "";
+    document.getElementById("idPageVersion").options[6].style = "";
+    document.getElementById("idPageVersion").options[7].style = "";
+    document.getElementById("idPageVersion").options[8].style = "";
+    document.getElementById("idPageVersion").options[9].style = "";
+  }
+  else if (option == "dhruva") {
+    document.getElementById("idPageVersion").value = "";
+    changePageVersion("");
+    document.getElementById("idPageVersion").options[0].style = "display:none;";
+    document.getElementById("idPageVersion").options[1].style = "display:none;";
+    document.getElementById("idPageVersion").options[2].style = "display:none;";
+    document.getElementById("idPageVersion").options[3].style = "display:none;";
+    document.getElementById("idPageVersion").options[4].style = "display:none;";
+    document.getElementById("idPageVersion").options[5].style = "display:none;";
+    document.getElementById("idPageVersion").options[6].style = "display:none;";
+    document.getElementById("idPageVersion").options[7].style = "display:none;";
+    document.getElementById("idPageVersion").options[8].style = "display:none;";
+    document.getElementById("idPageVersion").options[9].style = "display:none;";
+
+    document.getElementById("idPageLayoutVersion").value = "";
+    document.getElementById("idPageLayoutVersion").options[0].style = "display:none;";
+    document.getElementById("idPageLayoutVersion").options[1].style = "display:none;";
+    document.getElementById("idPageLayoutVersion").options[2].style = "display:none;";
+    document.getElementById("idPageLayoutVersion").options[3].style = "display:none;";
+  }
+}
+
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
@@ -4770,6 +4836,7 @@ function _draw_single_region(region, index) {
       elem("div", {"class": "row"}, [
         elem("div", {"class": "col-2"}, "Region " + idx.toString()),
         elem("div", { "class": "col-8 text-center"}, [
+          elem("span", {"class": "badge rounded-pill bg-primary"}, capitalizeFirstLetter(region.server)),
           elem("span", {"class": "badge rounded-pill bg-info"}, capitalizeFirstLetter(region.language)),
           elem("span", {"class": "badge rounded-pill bg-info", "style": region.custom_link ? "display:none;" : ""}, capitalizeFirstLetter(region.modality)),
           elem("span", {"class": "badge rounded-pill bg-info", "style": region.custom_link ? "display:none;" : ""}, capitalizeFirstLetter(region.layout_version)),
@@ -4913,4 +4980,27 @@ function savePageSettings() {
   console.log("Closing the offcanvas and performing the OCR");
   document.getElementById("idPageSettingsClose").click();
   perform_ocr();
+}
+
+function resetToDefault() {
+  console.log("reset to default called");
+  // document.getElementById("idPageLanguage")[0].selected = "selected";
+  document.getElementById("idPageModality")[0].selected = "selected";
+  document.getElementById("idPageLayoutVersion")[1].selected = "selected";
+  document.getElementById("idPageVersion")[3].selected = "selected";
+}
+
+function downloadText() {
+  console.log("called downloadText");
+  var text = "";
+  _img_metadata[_image_id].regions.forEach((region, idx) => {
+    text += region.ocr + "\n\n";
+  });
+  var element = document.createElement("a");
+  element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
+  element.setAttribute("download", "output.txt");
+  element.style.display = "none";
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
 }

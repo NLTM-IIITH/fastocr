@@ -59,7 +59,7 @@ class PageListView(LoginRequiredMixin, CreateView):
     
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         kwargs.update({
-            'page_list': Page.objects.filter(user=self.request.user),
+            'page_list': Page.objects.filter(user=self.request.user).order_by('-id'),
         })
         return super().get_context_data(**kwargs)
 
@@ -123,6 +123,12 @@ def temp_ocr(request):
     modality = request.POST.get('modality', 'printed')
     language = request.POST.get('language', 'english')
     custom_link = request.POST.get('custom_link', '')
+    server = request.POST.get('server', '')
+    if server in ('', 'dhruva'):
+        return JsonResponse({
+            'ocr': '',
+            'ok': False
+        })
     layout_version = request.POST.get('layout_version', 'v2_doctr')
     print(language, modality, version, layout_version, custom_link)
     if modality == 'handwritten' and version == 'v4':

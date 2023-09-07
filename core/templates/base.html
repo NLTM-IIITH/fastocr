@@ -119,5 +119,12 @@ var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
+    $(document).ready(function () {
+    $('#pagetable').DataTable({
+      "order": [[0, "desc"]],
+      "paging": false,
+      "info": false
+    });
+  });
   </script>
 </html>

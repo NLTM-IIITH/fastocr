@@ -51,8 +51,8 @@
   <div class="offcanvas-body">
     <div class="row">
       <div class="col">
-        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#customOCRLinkModal">
-          Add Custom Bhashini Model
+        <!-- <button type="button" class="btn btn-primary btn-sm" disabled data-bs-toggle="modal" data-bs-target="#customOCRLinkModal">
+          Add Custom ULCA Server
         </button>
         <div class="modal fade" id="customOCRLinkModal" tabindex="-1" aria-labelledby="customOCRLinkModalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -71,10 +71,44 @@
               </div>
             </div>
           </div>
+        </div> -->
+        <div class="m-2">
+          <label for="idPageServer">Server (ULCA Compliant)</label>
+          <select class="form-select" id="idPageServer" onchange="changePageServer(this.options[this.selectedIndex].value);" title="Select the Server from where OCR is served.">
+            <option value="">Select Server</option>
+            <option value="bhashini" selected>Bhashini (https://bhashini.gov.in)</option>
+            <option value="ilocr">IIITH (https://ilocr.iiit.ac.in)</option>
+            <option value="dhruva">Dhruva (?)</option>
+          </select>
         </div>
+        <div class="m-2 mb-3">
+          <label for="idPageVersion">OCR Version</label>
+          <select class="form-select" id="idPageVersion" onchange="changePageVersion(this.options[this.selectedIndex].value);">
+            <option value="">Select OCR Version</option>
+            <option value="v2">V2.0</option>
+            <option value="v3">V3.0</option>
+            <option value="v4">V4.0</option>
+            <option selected value="v4_robust">V4.1</option>
+            <option style="display:none;" value="v4_bilingual">V4.2</option>
+            <option value="v4_robustbilingual">V4.3</option>
+            <option style="display:none;" value="v4.14u">V4.0.14+u</option>
+            <option value="v4.14u_robust">V4.1.14+u</option>
+            <option style="display:none;" value="tesseract">Tesseract-V4</option>
+          </select>
+        </div>
+        <div class="m-2 mb-3">
+        <label for="idPageLayoutVersion">Layout Version</label>
+          <select class="form-select" id="idPageLayoutVersion" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
+            <option value="">Select Layout Version</option>
+            <option value="doctr">V1.0</option>
+            <option selected value="v2_doctr">V1.1</option>
+            <option value="craft">V2</option>
+          </select>
+        </div>
+        <hr title="OR Select from one of the available version" data-bs-target="tooltip">
         <div class="m-2">
           <label for="idPageLanguage">Language</label>
-          <select class="form-select m-2" id="idPageLanguage" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
+          <select class="form-select" id="idPageLanguage" onchange="changePageLanguage(this.options[this.selectedIndex].value);" title="Select the Language of the document.">
             <option selected>Default: {{ page.language|title }}</option>
             <option value="assamese">Assamese</option>
             <option value="bengali">Bengali</option>
@@ -92,7 +126,6 @@
             <option value="urdu">Urdu</option>
           </select>
         </div>
-        <hr title="OR Select from one of the available version" data-bs-target="tooltip">
         <div class="m-2 mb-3">
           <label for="idPageModality">Modality</label>
           <select class="form-select" id="idPageModality" onchange="changePageModality(this.options[this.selectedIndex].value);" title="Select the Modality of the document.">
@@ -101,33 +134,12 @@
             <option value="scenetext">SceneText</option>
           </select>
         </div>
-        <div class="m-2 mb-3">
-        <label for="idPageLayoutVersion">Layout Version</label>
-          <select class="form-select" id="idPageLayoutVersion" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
-            <option value="doctr">V1.0</option>
-            <option selected value="v2_doctr">V1.1</option>
-            <option value="craft">V2</option>
-          </select>
-        </div>
-        <div class="m-2 mb-3">
-          <label for="idPageVersion">OCR Version</label>
-          <select class="form-select" id="idPageVersion" onchange="changePageVersion(this.options[this.selectedIndex].value);">
-            <option value="v2">V2.0</option>
-            <option value="v3">V3.0</option>
-            <option value="v4">V4.0</option>
-            <option selected value="v4_robust">V4.1</option>
-            <option value="v4_bilingual">V4.2</option>
-            <option value="v4_robustbilingual">V4.3</option>
-            <option value="v4.14u">V4.0.14+u</option>
-            <option value="v4.14u_robust">V4.1.14+u</option>
-            <option value="tesseract">Tesseract-V4</option>
-          </select>
-        </div>
       </div>
     </div>
     <div class="row mt-2">
       <div class="col">
         <button class="btn btn-success" onclick="savePageSettings();">Save & Re-run</button>
+        <!-- <button class="btn btn-warning" onclick="resetToDefault();">Reset</button> -->
       </div>
     </div>
   </div>
@@ -144,6 +156,7 @@
     Instructions
   </a>
   <a href="{% url 'core:next' pk=page.pk %}" class="btn btn-primary">Next Page</a>
+  <button class="btn btn-success" onclick="downloadText();" title="Download the Completed OCR as Text file"><i class="fa fa-download"></i> Text</button>
 
   </div>
   <div class="row">
@@ -188,9 +201,25 @@
     data["region"] = read_json["region"];
     console.log(data["region"]);
 
+    function init(data) {
+      img = document.getElementById("hardimage");
+      if (img.complete && img.naturalHeight!==0) {
+        _init_seg_tool(data);
+        return True;
+      }
+      else {
+        console.log("image not loaded, trying again after sometime");
+        setTimeout(() => {
+          init(data);
+        }, 1000);
+        return False;
+      }
+    }
+
     setTimeout(() => {
       _init_seg_tool(data);
-    }, 1000);
+      // init(data);
+    }, 2000);
 
     // _init_seg_tool(data);
 
