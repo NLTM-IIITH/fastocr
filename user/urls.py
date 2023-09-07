@@ -11,6 +11,7 @@ urlpatterns = [
 	# path('stats/', views.UserStatsView.as_view(), name='stats'),
 	# path('<int:pk>/profile/', views.UserUpdateView.as_view(), name='update'),
 	path('register/', views.register, name='register'),
+	path('verify/', views.verify, name='verify'),
 
 	# path('<int:pk>/unassign/', views.UnassignView.as_view(), name='unassign'),
 ]

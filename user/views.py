@@ -1,3 +1,7 @@
+import random
+import smtplib
+from email.message import EmailMessage
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -43,6 +47,19 @@ class BaseUserView(LoginRequiredMixin):
 # 		return self.get_object() == self.request.user or \
 # 			self.request.user.is_staff # type: ignore
 
+def send_email(email, code):
+	s = smtplib.SMTP('smtp.gmail.com', 587)
+	s.starttls()
+	s.login('kt.krishna.tulsyan@gmail.com', 'ahqqznyhleeszlez')
+	msg = f'You verification code FastOCR is: {code}'
+	content = EmailMessage()
+	content['Subject'] = f'Verification: {code}'
+	content['From'] = 'kt.krishna.tulsyan@gmail.com'
+	content['To'] = email
+	content.set_content(msg)
+	s.send_message(content)
+	s.quit()
+
 
 def register(request):
 	print('request received inside register')
@@ -51,15 +68,42 @@ def register(request):
 		form = SignUpForm(request.POST)
 		if form.is_valid():
 			print('form valid')
-			form.save()
+			user = form.save()
+			print(user)
+			user.is_active = False
+			user.code = random.randint(100_000, 999_999)
+			user.save()
+			print('sending mail')
+			send_email(user.email, user.code)
 			# username = form.cleaned_data.get('username')
 			# raw_password = form.cleaned_data.get('password1')
 			# user = authenticate(username=username, password=raw_password)
 			# login(request, user)
-			return redirect('core:index')
+			return redirect('user:verify')
 	else:
 		form = SignUpForm()
 	return render(request, 'registration/register.html', {'form': form})
+
+
+def verify(request):
+	print('Verifing the user with email and verification code')
+	msg = ''
+	if request.method == 'POST':
+		try:
+			username = request.POST.get('username', '')
+			code = request.POST.get('code', '')
+			user = User.objects.get(username=username)
+			if str(user.code) == str(code.strip()):
+				user.is_active = True
+				user.save()
+				login(request, user)
+				return redirect('core:index')
+			else:
+				msg = 'Please enter a valid code'
+		except Exception as e:
+			print(e)
+			msg = 'No User found with this username'
+	return render(request, 'registration/verify.html', {'msg': msg})
 
 
 # class UnassignView(UserPassesTestMixin, BaseUserView, DetailView):

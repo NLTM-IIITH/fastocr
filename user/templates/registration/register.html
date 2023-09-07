@@ -47,6 +47,11 @@
                           </div>
                         </div>
                       </div>
+                      <small class="text-muted">{{ form.email.help_text }}</small>
+                      <div class="form-floating mb-3 mt-1">
+                        {{ form.email|add_attr:"form-control, placeholder: email, required: true" }}
+                        <label for="{{ form.email.id_for_label }}">Email</label>
+                      </div>
                       <small class="text-muted">{{ form.username.help_text }}</small>
                       <div class="form-floating mb-3 mt-1">
                         {{ form.username|add_attr:"form-control, placeholder: Username" }}
