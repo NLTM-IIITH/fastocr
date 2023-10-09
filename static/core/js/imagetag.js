@@ -4906,9 +4906,9 @@ function _draw_single_region(region, index) {
             "onchange": "changeRegionLayoutVersion(" + index.toString() + ", this.options[this.selectedIndex].value);",
           }, [
             elem("option", {"selected": "true"}, "Layout (" + region.layout_version + ")"),
+            elem("option", {"value": "craft"}, "V0.1"),
             elem("option", {"value": "doctr"}, "V1.0"),
             elem("option", {"value": "v2_doctr"}, "V1.1"),
-            elem("option", {"value": "craft"}, "V2.0"),
           ])
         ]),
         elem("div", {"class": "col-3 pl-0"}, [
@@ -4926,6 +4926,10 @@ function _draw_single_region(region, index) {
             elem("option", {"value": "v4_robustbilingual"}, "V4.3"),
             elem("option", {"value": "v4.14u"}, "V4.0.14+u"),
             elem("option", {"value": "v4.14u_robust"}, "V4.1.14+u"),
+            elem("option", {"value": "v5"}, "V5.0"),
+            elem("option", {"value": "v5_robust"}, "V5.1"),
+            elem("option", {"value": "v5_bilingual"}, "V5.2"),
+            elem("option", {"value": "v5_robustbilingual"}, "V5.3"),
             elem("option", {"value": "tesseract"}, "Tesseract-V4"),
           ])
         ]),

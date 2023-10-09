@@ -93,6 +93,10 @@
             <option value="v4_robustbilingual">V4.3</option>
             <option style="display:none;" value="v4.14u">V4.0.14+u</option>
             <option value="v4.14u_robust">V4.1.14+u</option>
+            <option value="v5">V5.0</option>
+            <option value="v5_robust">V5.1</option>
+            <option value="v5_bilingual">V5.2</option>
+            <option value="v5_robustbilingual">V5.3</option>
             <option style="display:none;" value="tesseract">Tesseract-V4</option>
           </select>
         </div>
@@ -100,9 +104,9 @@
         <label for="idPageLayoutVersion">Layout Version</label>
           <select class="form-select" id="idPageLayoutVersion" onchange="changePageLayoutVersion(this.options[this.selectedIndex].value);" title="Select the Layout model to run for this page, Specified in the Brackets () is the modality for which this model works the best">
             <option value="">Select Layout Version</option>
+            <option value="craft">V0.1</option>
             <option value="doctr">V1.0</option>
             <option selected value="v2_doctr">V1.1</option>
-            <option value="craft">V2</option>
           </select>
         </div>
         <hr title="OR Select from one of the available version" data-bs-target="tooltip">

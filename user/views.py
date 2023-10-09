@@ -47,15 +47,31 @@ class BaseUserView(LoginRequiredMixin):
 # 		return self.get_object() == self.request.user or \
 # 			self.request.user.is_staff # type: ignore
 
-def send_email(email, code):
+def send_email(email, code, username):
 	s = smtplib.SMTP('smtp.gmail.com', 587)
 	s.starttls()
 	s.login('kt.krishna.tulsyan@gmail.com', 'ahqqznyhleeszlez')
 	msg = f'You verification code FastOCR is: {code}'
+	msg = """Hi {},
+	
+Thank you for your interest in FastOCR!
+Please enter the following verification code our website to complete the sign-up process.
+
+<b>Verification code: {}</b>
+
+If you have any queries, feel free to get in touch with us at {}.
+
+Best Regards,
+FastOCR Development Team""".format(
+		username,
+		code,
+		email
+	)
 	content = EmailMessage()
-	content['Subject'] = f'Verification: {code}'
+	content['Subject'] = f'FastOCR Verification: {code}'
 	content['From'] = 'kt.krishna.tulsyan@gmail.com'
 	content['To'] = email
+	content.add_header('Content-Type', 'text/html')
 	content.set_content(msg)
 	s.send_message(content)
 	s.quit()
@@ -74,7 +90,7 @@ def register(request):
 			user.code = random.randint(100_000, 999_999)
 			user.save()
 			print('sending mail')
-			send_email(user.email, user.code)
+			send_email(user.email, user.code, user.username)
 			# username = form.cleaned_data.get('username')
 			# raw_password = form.cleaned_data.get('password1')
 			# user = authenticate(username=username, password=raw_password)
