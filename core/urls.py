@@ -11,4 +11,5 @@ urlpatterns = [
     path('fancy/', views.FancyIndexView.as_view(), name='fancy'),
     path('ocr/<int:pk>/', views.OCRView.as_view(), name='ocr'),
     path('ocr/temp/', views.temp_ocr, name='temp'),
+    path('pages/finetune/', views.finetune, name='finetune')
 ]

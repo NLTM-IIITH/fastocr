@@ -1,12 +1,22 @@
 import base64
 import json
 import shutil
+import requests
+import tempfile
+import time
+import os
+import io
+import zipfile
+import subprocess
 from os.path import basename, join
 from tempfile import TemporaryDirectory
 from typing import Any, Dict
+from PIL import Image , ImageDraw
+from io import BytesIO
 
 import requests
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.db.models.query import QuerySet
 from django.forms.models import BaseModelForm
 from django.http import HttpResponse, JsonResponse
@@ -14,9 +24,11 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import CreateView, DetailView, View
+from django.conf import settings
 from PIL import Image
 
 from .models import Page
+
 
 
 class IndexView(CreateView):
@@ -191,3 +203,72 @@ def temp_ocr(request):
         'ocr': ocr,
         'ok': r.ok
     })
+
+def finetune(request):
+    user = Page.objects.filter(user=request.user)
+    user_data=[]
+    filenames=[]
+    for i in request.POST:
+        if(i!='csrfmiddlewaretoken' or i!='pagetable_length'):
+            filenames.append(i)
+
+    for i in user:
+        if i.filename in filenames:
+            user_data.append(i)
+
+    if(len(user_data)==3):
+        temp_dir = os.path.join(settings.MEDIA_ROOT,'temp_dir','ajoy_style_gt')
+        if not os.path.exists(temp_dir):
+            os.makedirs(temp_dir)
+        img_dir = os.path.join(temp_dir,'images')
+        if not os.path.exists(img_dir):
+            os.makedirs(img_dir)
+
+        gt=os.path.join(temp_dir,'gt.txt')
+        for i in user_data:
+            url = 'http://10.4.16.81:8812/fastocr/media/' + str(i.upload)
+            lang = i.language
+            response = requests.get(url)
+            if response.status_code == 200:
+                json_content = response.json()
+                for j in json_content['regions']:
+                    for k in j['words']:
+                        print(k['id'],k['x'],k['y'],k['w'],k['h'])
+                        my_image = Page.objects.get(id=i.id).image
+                        image = Image.open(io.BytesIO(my_image.read()))
+                        image_format = image.format
+                        print(image_format)
+                        if image_format != "JPEG":
+                            output = io.BytesIO()
+                            image.save(output, format="JPEG")
+                            
+                        cropped_img = image.crop((k['x'], k['y'], k['x'] + k['w'], k['y'] + k['h']))
+                        fname='{fname}.jpg'.format(fname=k['id'])
+                        cropped_img.save(os.path.join(img_dir,fname))
+                        with open(gt, 'a') as file:
+                            file.write('images/'+k['id']+'.jpg'+"\t"+k['text']+'\n')
+            else:
+                print(f"Failed to retrieve JSON file. Status code: {response.status_code}")           
+        zip_name = "media/{a}".format(a=k['id'])
+        print(os.path.join(settings.BASE_DIR,zip_name))
+        archived = shutil.make_archive(os.path.join(settings.BASE_DIR,zip_name), 'zip', os.path.join(settings.BASE_DIR,"media/temp_dir"))
+        # /home/apoorva/custom-ocr/fastocr/media/temp_dir
+        file_paths = {"dataset_file":os.path.join(settings.BASE_DIR,(str(zip_name)+".zip")),"pretrained_model":os.path.join(settings.BASE_DIR,"pretrained_model_input.zip")}
+        files = {key: open(path, 'rb') for key, path in file_paths.items()}
+        data = {"lang":lang, "status":"pending"}
+
+        response = requests.post("http://10.4.16.81:2901/", files=files, data=data)
+
+        if response.status_code == 200:
+            data = response.json()
+            print(data)
+        else:
+            print(f"API call failed with status code {response.status_code}")
+
+    else:
+        messages.error(request,"Please check 3 boxes")
+        return redirect('core:page-list')
+    messages.success(request, 'Please check in the database for the output zip file')
+    if os.path.exists(os.path.join(settings.MEDIA_ROOT,'temp_dir')):
+        shutil.rmtree(os.path.join(settings.MEDIA_ROOT,'temp_dir'))
+    return redirect('core:page-list')

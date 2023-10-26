@@ -35,7 +35,7 @@ class Page(models.Model):
     )
 
     image = models.ImageField(
-        upload_to='images'
+        upload_to='input_images'
     )
     version = models.CharField(
         default='v4',
@@ -51,7 +51,7 @@ class Page(models.Model):
         on_delete=models.CASCADE,
         related_name='pages',
     )
-
+    upload = models.FileField(upload_to ='uploads/', null=True) 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

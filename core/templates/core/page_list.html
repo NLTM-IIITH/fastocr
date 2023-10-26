@@ -3,16 +3,19 @@
 
 {% block content %}
 <!-- Button trigger modal -->
-
 <div class="container-fluid mt-4">
   <div class="h3">
     <p>Welcome, {{ request.user.first_name|title }} {{ request.user.last_name|title }}</p>
+    {% if messages %}
+          {% for message in messages %}
+          <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+          {% endfor %}
+    {% endif %}
   </div>
   <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
     <i class="fa fa-plus"></i>
     Upload new Page
   </button>
-  <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -55,6 +58,14 @@
       </div>
     </div>
   </div>
+  <form action = '{% url "core:finetune" %}' method="post" >
+    {% csrf_token %} 
+  
+  <button type="submit" class="btn btn-primary mt-3" data-bs-toggle="modal">
+    <i class="fa fa-plus"></i>
+    FineTune
+  </button>
+  <!-- Modal -->
 
   <table class="table mt-2 pt-2" id="pagetable">
     <thead>
@@ -67,6 +78,7 @@
         <th>Upload Date</th>
         <th>Language</th>
         <th>Action</th>
+        <th> </th>
       </tr>
     </thead>
     <tbody>
@@ -99,6 +111,8 @@
           <a href="{% url 'core:ocr' pk=page.pk %}" target="_blank" class="btn btn-primary"><i class="fa fa-external-link"></i> OCR</a>
           <a href="{% url 'core:delete' pk=page.pk %}" class="btn btn-danger" data-bs-toggle="tooltip" title="Delete this page"><i class="fa fa-trash"></i></a>
         </td>
+        <td><input type="checkbox" id="{{page.id}}" name="{{ page.filename }}">
+          
       </tr>
       {% empty %}
       <tr>
@@ -107,5 +121,6 @@
       {% endfor %}
     </tbody>
   </table>
+  </form>
 </div>
 {% endblock content %}
